@@ -1,3 +1,4 @@
-import * as imageUpload from "./azure/imageUpload";
+import * as azureBucket from "./azure/imageUpload";
+import * as jwtChecker from "./jwt/tokenChecker";
 
-export { imageUpload };
+export { azureBucket, jwtChecker };

@@ -1,0 +1,6 @@
+.github
+bin
+src
+.gitignore
+.npmignore
+package-lock.json
