@@ -6,6 +6,7 @@ interface AuthenticatedRequest extends Request {
 }
 
 let secretToken: string | undefined;
+let customFunction: any;
 
 export const setup = (getSecretCallback: () => string) => {
   secretToken = getSecretCallback();
@@ -20,11 +21,14 @@ export const getSecret = () => {
   return secretToken;
 };
 
+export const setupCustomFunction = (customFunc: any) => {
+  customFunction = customFunc;
+};
+
 export const checker = async (
   req: AuthenticatedRequest,
   res: Response,
-  next: NextFunction,
-  customFunction?: any
+  next: NextFunction
 ): Promise<any> => {
   const token = req.headers["authorization"];
 

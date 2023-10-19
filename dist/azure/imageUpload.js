@@ -27,15 +27,20 @@ exports.removeImagesFromUrls = exports.uploadPDFBuffer = exports.uploadMultipleI
 const storage_blob_1 = require("@azure/storage-blob");
 const uuid_1 = require("uuid");
 const multer_1 = __importStar(require("multer"));
-let connectionString = "YourConnectionString";
-let containerName = "image";
-const setupAzureStorage = async (connectionString, containerName) => {
-    connectionString = connectionString;
-    containerName = containerName;
+let blobServiceClient;
+let containerClient;
+const setupAzureStorage = (connectionString, containerName) => {
+    try {
+        blobServiceClient =
+            storage_blob_1.BlobServiceClient.fromConnectionString(connectionString);
+        containerClient = blobServiceClient.getContainerClient(containerName);
+    }
+    catch (error) {
+        console.error("Error setting up Azure Storage:", error);
+        throw error; // Rethrow the error to indicate the problem
+    }
 };
 exports.setupAzureStorage = setupAzureStorage;
-const blobServiceClient = storage_blob_1.BlobServiceClient.fromConnectionString(connectionString);
-const containerClient = blobServiceClient.getContainerClient(containerName);
 async function uploadPDFBuffer(pdfBuffer) {
     // Generate a unique filename using UUID
     const filename = `${(0, uuid_1.v1)()}.pdf`;
@@ -80,7 +85,7 @@ async function removeImagesFromUrls(imageUrls) {
     const imageUrlArray = imageUrls.split(",");
     for (const imageUrl of imageUrlArray) {
         const blobName = imageUrl.split("/").pop();
-        const blobClient = containerClient === null || containerClient === void 0 ? void 0 : containerClient.getBlockBlobClient(blobName);
+        const blobClient = containerClient.getBlockBlobClient(blobName);
         try {
             const deleteResponse = await blobClient.deleteIfExists();
             if (deleteResponse.succeeded) {

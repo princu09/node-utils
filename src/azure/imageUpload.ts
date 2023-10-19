@@ -7,21 +7,19 @@ import {
 import { v1 as uuidv1 } from "uuid";
 import multer, { memoryStorage } from "multer";
 
-let connectionString = "YourConnectionString";
-let containerName = "image";
+let blobServiceClient;
+let containerClient: ContainerClient;
 
-const setupAzureStorage = async (
-  connectionString: String,
-  containerName: String
-) => {
-  connectionString = connectionString;
-  containerName = containerName;
+const setupAzureStorage = (connectionString: string, containerName: string) => {
+  try {
+    blobServiceClient =
+      BlobServiceClient.fromConnectionString(connectionString);
+    containerClient = blobServiceClient.getContainerClient(containerName);
+  } catch (error) {
+    console.error("Error setting up Azure Storage:", error);
+    throw error; // Rethrow the error to indicate the problem
+  }
 };
-
-const blobServiceClient =
-  BlobServiceClient.fromConnectionString(connectionString);
-const containerClient: ContainerClient =
-  blobServiceClient.getContainerClient(containerName);
 
 async function uploadPDFBuffer(pdfBuffer: Uint8Array): Promise<string> {
   // Generate a unique filename using UUID
@@ -85,7 +83,7 @@ async function removeImagesFromUrls(imageUrls: string) {
 
   for (const imageUrl of imageUrlArray) {
     const blobName = imageUrl.split("/").pop();
-    const blobClient: BlockBlobClient = containerClient?.getBlockBlobClient(
+    const blobClient: BlockBlobClient = containerClient.getBlockBlobClient(
       blobName!
     );
 

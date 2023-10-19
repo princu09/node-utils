@@ -23,6 +23,8 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.imageUpload = void 0;
-const imageUpload = __importStar(require("./azure/imageUpload"));
-exports.imageUpload = imageUpload;
+exports.jwtChecker = exports.azureBucket = void 0;
+const azureBucket = __importStar(require("./azure/imageUpload.js"));
+exports.azureBucket = azureBucket;
+const jwtChecker = __importStar(require("./jwt/tokenChecker.js"));
+exports.jwtChecker = jwtChecker;
